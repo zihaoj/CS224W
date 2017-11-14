@@ -35,9 +35,12 @@ def GetNetWorkStat(network, networkname):
     for node in network.Nodes():
         forward = snap.GetBfsTree(network, node.GetId(), True, False)
         bfsnodes.append( forward.GetNodes()    )
-        if forward.GetNodes() == 48:
-            print node.GetId()
 
+        if forward.GetNodes() == 48:
+            print "node high", node.GetId()
+        if forward.GetNodes() == 1:
+            print "node", node.GetId()
+    print bfsnodes
     ### Clustring coefficients
     print "clustering coeff",  snap.GetClustCf(network)
 
