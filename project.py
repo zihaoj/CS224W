@@ -22,7 +22,7 @@ def GetNetWorkStat(network, networkname):
     plt.ylabel('Number of Nodes')
     plt.legend()
     plt.xlim ([0, 50])
-    plt.show()
+    #plt.show()
 
     #### largest SCC, WCC
     MxScc = snap.GetMxScc(network)
@@ -45,6 +45,64 @@ def GetNetWorkStat(network, networkname):
     print "clustering coeff",  snap.GetClustCf(network)
 
 
+    ### GetBetweeness
+    
+    betweenes =[]
+    nid = []
+
+    node_betweeness = snap.TIntFltH()
+    edge_betweeness = snap.TIntPrFltH()
+    snap.GetBetweennessCentr(network, node_betweeness, edge_betweeness, 1.0, True)
+    for node in node_betweeness:
+        nid.append(node)
+        betweenes.append(node_betweeness[node])
+
+    betweenes = np.array(betweenes)
+    nid = np.array(nid)
+    nid = nid[ np.argsort( betweenes)]
+    betweenes = betweenes[ np.argsort( betweenes)]
+
+    print nid
+    print betweenes
+
+    
+    nid = []
+    closeness = []
+    
+    ## GetCloseness
+    for node in network.Nodes():
+        nid.append(node.GetId())
+        closeness.append( snap.GetClosenessCentr(network, node.GetId(), True, True))
+        #print "closeness", node.GetId(), snap.GetClosenessCentr(network, node.GetId(), True, True)
+
+    nid = np.array(nid)
+    closeness = np.array(closeness)
+    nid = nid[ np.argsort( closeness)]
+    closeness = closeness[np.argsort(closeness)]
+
+    print nid, closeness
+
+    ecc = []
+    nid = []
+    ## Get Eccentricity
+    for node in network.Nodes():
+
+        nid.append(node.GetId())
+        ecc.append(        snap.GetNodeEcc(network, node.GetId(), True))
+        
+    nid = np.array(nid)
+    ecc = np.array(ecc)
+    nid = nid[ np.argsort( ecc)]
+    ecc = ecc[np.argsort(ecc)]
+
+    print nid, ecc
+
+
+    snap.DrawGViz(network, snap.gvlNeato, "vis.png", "Mexican Bank Network Visualization", True) 
+
+
+
+
 def GenRandomNet(reference):
     NNodes = reference.GetNodes()
     NEdge  = reference.GetEdges()
@@ -54,5 +112,8 @@ def GenRandomNet(reference):
 
             
 GetNetWorkStat(network, "Mexican Bank Network")
-randnet = GenRandomNet(network)
-GetNetWorkStat(randnet, "Reference Erdos-Renyi Network")
+#randnet = GenRandomNet(network)
+#GetNetWorkStat(randnet, "Reference Erdos-Renyi Network")
+
+
+
